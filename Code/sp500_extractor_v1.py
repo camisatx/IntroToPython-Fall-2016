@@ -62,7 +62,7 @@ ticker_list.sort()
 print(ticker_list)
 
 # Save the ticker list to a csv file
-with open(csv_output, 'w') as file:
+with open(csv_output, 'w', newline='') as file:
     writer = csv.writer(file)
     for ticker in ticker_list:
         writer.writerow([ticker])
