@@ -18,7 +18,7 @@ http://www.w3schools.com/html/html_tables.asp
 # Install BeautifulSoup
 http://stackoverflow.com/a/19957214
 # Pip install with Python 3.5 Windows local install
-C:\Users\<USERNAME>\AppData\Local\Programs\Python\Python35-32\Scripts\pip.exe install beautifulsoup4
+C:\ Users\<USERNAME>\AppData\Local\Programs\Python\Python35-32\Scripts\pip.exe install beautifulsoup4
 
 # BS4 parsing
 http://stackoverflow.com/a/23377804
@@ -41,8 +41,6 @@ with urlopen(url) as response:
 soup = BeautifulSoup(html, 'lxml')
 sp_500_table = soup('table')[0]
 
-# print(sp_500_table)
-
 # Process the downloaded object to get a list of tickers
 
 ticker_list = []
@@ -61,8 +59,7 @@ for row in sp_500_table.findAll('tr'):
 # Alphabetize ticker list
 ticker_list.sort()
 
-# print(ticker_list)
-# print(len(ticker_list))
+print(ticker_list)
 
 # Save the ticker list to a csv file
 with open(csv_output, 'w') as file:
