@@ -1,5 +1,6 @@
 from datetime import datetime
 import pandas as pd
+from matplotlib import pyplot as plt
 
 
 def download_prices(ticker, start, end, interval='d'):
@@ -20,7 +21,7 @@ def download_prices(ticker, start, end, interval='d'):
     # Prepare the URL API component strings
     url_root = 'http://chart.finance.yahoo.com/table.csv?'
     url_ticker = 's=%s' % ticker
-    url_interval = 'd=%s' % interval
+    url_interval = 'g=%s' % interval
     url_start = ('a=%s&b=%s&c=%s' % ((start.month - 1), start.day, start.year))
     url_end = ('d=%s&e=%s&f=%s' % ((end.month - 1), end.day, end.year))
     url_csv = 'ignore=.csv'
@@ -37,6 +38,22 @@ def download_prices(ticker, start, end, interval='d'):
     return raw_df
 
 
+def sma(df, period):
+    """ A simple moving average (SMA) is formed by computing the average price
+    of a security over a specific number of periods.
+
+    http://pandas.pydata.org/pandas-docs/version/0.17.0/generated/pandas.rolling_mean.html
+
+    :param df: DataFrame of the raw prices
+    :param period: Integer of the periods to average
+    :return: Series of the rolling average values
+    """
+
+    cur_price = df['Adj Close']
+    roll_ma = pd.rolling_mean(cur_price, period)
+    return roll_ma
+
+
 if __name__ == '__main__':
 
     test_ticker = 'AAPL'
@@ -46,5 +63,25 @@ if __name__ == '__main__':
 
     price_df = download_prices(ticker=test_ticker, start=test_start,
                                end=test_end, interval=test_interval)
+
+    # Remove all columns that we do not need
+    price_df.drop(['Open', 'High', 'Low', 'Close', 'Volume'], axis=1,
+                  inplace=True)
+
+    # Sort the prices oldest to newest (ascending)
+    price_df.sort_index(axis=0, ascending=True, inplace=True)
+
+    # Calculate the 50 period simple moving average
+    sma_50 = sma(df=price_df, period=50)
+    price_df['sma_%s' % 50] = sma_50
+
+    # Calculate the 200 period simple moving average
+    sma_200 = sma(df=price_df, period=200)
+    price_df['sma_%s' % 200] = sma_200
+
+    # Plot all the DataFrame columns
+    # http://pandas.pydata.org/pandas-docs/version/0.18.1/visualization.html
+    price_df.plot(title='%s_%s' % (test_ticker, test_interval))
+    plt.show()
 
     price_df.to_csv('%s_%s.csv' % (test_ticker, test_interval))
